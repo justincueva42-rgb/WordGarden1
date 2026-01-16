@@ -10,13 +10,16 @@ import SwiftUI
 struct ContentView: View {
     @State private var wordsGuessed = 0
     @State private var wordsMissed = 0
-    @State private var wordsToGuess = ["SWIFT" , "DOG" , "CAT"] ///All Caps
     @State private var gameStatusMessage = "How Mant Guesses to Uncover the Hidden Word?"
-    @State private var currentWord = 0 //index in wordsToGuess
+    @State private var wordToGuess = ""
+    @State private var revealedWord = ""
+    @State private var lettersGuessed = ""
+    @State private var currentWordIndex = 0 //index in wordsToGuess
     @State private var guessedLetter = ""
     @State private var imageName = "flower8"
     @State private var playAgainHidden = true
     @FocusState private var textFieldIsFocused: Bool
+    private let wordsToGuess = ["SWIFT" , "DOG" , "CAT"] ///All Caps
     var body: some View {
         VStack {
             HStack {
@@ -38,8 +41,8 @@ struct ContentView: View {
                 .multilineTextAlignment(.center)
                 .padding()
             
-            //TODO: Switch to wordsToGuess[currentWord]
-            Text("_ _ _ _ _")
+            //TODO: Switch to wordsToGuess[currentWordIndex]
+            Text(revealedWord)
                 .font(.title)
             
             if playAgainHidden {
@@ -68,6 +71,11 @@ struct ContentView: View {
                     Button("Guess a Letter:") {
                         //TODO: Guess a Letter button action here
                         textFieldIsFocused = false
+                        lettersGuessed = lettersGuessed + guessedLetter
+                        revealedWord = wordToGuess.map{ letter in
+                            lettersGuessed.contains(letter) ? "\(letter)" : "_"
+                        }.joined(separator: " ")
+                        guessedLetter = ""
                     }
                     .buttonStyle(.bordered)
                     .tint(.mint)
@@ -89,6 +97,12 @@ struct ContentView: View {
                 .scaledToFit()
         }
         .ignoresSafeArea(edges:.bottom)
+        .onAppear {
+            wordToGuess = wordsToGuess[currentWordIndex]
+            // CREATE A STRING FROM A REPEATING VALUE
+            revealedWord = "_" + String(repeating: " _", count: wordToGuess.count-1)
+            print(revealedWord)
+        }
     }
 }
 
